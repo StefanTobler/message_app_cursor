@@ -9,11 +9,11 @@ import { Search, Loader2, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 
-interface MessageListProps {
+interface ThreadListProps {
   onSelectThread?: () => void;
 }
 
-export default function MessageList({ onSelectThread }: MessageListProps) {
+export default function ThreadList({ onSelectThread }: ThreadListProps) {
   const {
     selectedThread,
     setSelectedThread,

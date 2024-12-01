@@ -1,31 +1,33 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import MessageList from "@/components/message-list"
-import ChatView from "@/components/chat-view"
-import { ChatProvider } from "@/context/chat-context"
-import { Button } from "@/components/ui/button"
-import { Menu, X, Loader2 } from "lucide-react"
-import { AuthForm } from "@/components/ui/auth-form"
-import { useChat } from "@/context/chat-context"
+import { useState } from "react";
+import ThreadList from "@/components/thread-list";
+import ChatView from "@/components/chat-view";
+import { ChatProvider } from "@/context/chat-context";
+import { Button } from "@/components/ui/button";
+import { Menu, X, Loader2 } from "lucide-react";
+import { AuthForm } from "@/components/ui/auth-form";
+import { useChat } from "@/context/chat-context";
 
 function LoadingScreen() {
   return (
     <div className="h-screen flex items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Loading your messages...</p>
+        <p className="text-sm text-muted-foreground">
+          Loading your messages...
+        </p>
       </div>
     </div>
-  )
+  );
 }
 
 function MessagesApp() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const { user, initialLoading } = useChat()
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user, initialLoading } = useChat();
 
   if (initialLoading) {
-    return <LoadingScreen />
+    return <LoadingScreen />;
   }
 
   if (!user) {
@@ -33,7 +35,7 @@ function MessagesApp() {
       <div className="h-screen flex items-center justify-center p-4">
         <AuthForm />
       </div>
-    )
+    );
   }
 
   return (
@@ -54,7 +56,7 @@ function MessagesApp() {
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 transform transition-transform duration-200 ease-in-out fixed md:relative z-40 w-full md:w-1/3 lg:w-1/4 h-full bg-background border-r`}
       >
-        <MessageList onSelectThread={() => setSidebarOpen(false)} />
+        <ThreadList onSelectThread={() => setSidebarOpen(false)} />
       </div>
 
       {/* Main content */}
@@ -70,7 +72,7 @@ function MessagesApp() {
         />
       )}
     </main>
-  )
+  );
 }
 
 export default function Home() {
@@ -78,5 +80,5 @@ export default function Home() {
     <ChatProvider>
       <MessagesApp />
     </ChatProvider>
-  )
+  );
 }
