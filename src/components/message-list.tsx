@@ -1,37 +1,39 @@
-"use client"
+"use client";
 
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { useChat } from "@/context/chat-context"
-import { Input } from "@/components/ui/input"
-import { useState, useEffect } from "react"
-import { Search, Loader2, Plus, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { api } from "@/lib/api"
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useChat } from "@/context/chat-context";
+import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
+import { Search, Loader2, Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { api } from "@/lib/api";
 
 interface MessageListProps {
-  onSelectThread?: () => void
+  onSelectThread?: () => void;
 }
 
 export default function MessageList({ onSelectThread }: MessageListProps) {
-  const { 
-    selectedThread, 
-    setSelectedThread, 
-    conversations, 
+  const {
+    selectedThread,
+    setSelectedThread,
+    conversations,
     loading,
-    addNewConversation 
-  } = useChat()
-  
-  const [searchQuery, setSearchQuery] = useState("")
-  const [showNewMessage, setShowNewMessage] = useState(false)
-  const [userSearchQuery, setUserSearchQuery] = useState("")
-  const [searchResults, setSearchResults] = useState<Array<{ id: number; username: string }>>([])
-  const [searchLoading, setSearchLoading] = useState(false)
-  const [selectedIndex, setSelectedIndex] = useState(-1)
+    addNewConversation,
+  } = useChat();
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showNewMessage, setShowNewMessage] = useState(false);
+  const [userSearchQuery, setUserSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<
+    Array<{ id: number; username: string }>
+  >([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const filteredConversations = (conversations || []).filter((conversation) =>
     conversation.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  );
 
   // Reset selected index when search query changes
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
         const users = await api.searchUsers(userSearchQuery);
         setSearchResults(users);
       } catch (error) {
-        console.error('Error searching users:', error);
+        console.error("Error searching users:", error);
       } finally {
         setSearchLoading(false);
       }
@@ -64,24 +66,24 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
     if (!searchResults.length) return;
 
     switch (e.key) {
-      case 'ArrowDown':
+      case "ArrowDown":
         e.preventDefault();
-        setSelectedIndex(prev => 
+        setSelectedIndex((prev) =>
           prev < searchResults.length - 1 ? prev + 1 : prev
         );
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         e.preventDefault();
-        setSelectedIndex(prev => prev > 0 ? prev - 1 : prev);
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
         break;
-      case 'Enter':
+      case "Enter":
         e.preventDefault();
         if (selectedIndex >= 0 && selectedIndex < searchResults.length) {
           const selectedUser = searchResults[selectedIndex];
           startNewConversation(selectedUser.id, selectedUser.username);
         }
         break;
-      case 'Escape':
+      case "Escape":
         e.preventDefault();
         setShowNewMessage(false);
         setUserSearchQuery("");
@@ -92,8 +94,8 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
   const startNewConversation = async (userId: number, username: string) => {
     try {
       // First check if a conversation already exists with this user
-      const existingConversation = conversations.find(conv => 
-        conv.type === "direct" && conv.name === username
+      const existingConversation = conversations.find(
+        (conv) => conv.type === "direct" && conv.name === username
       );
 
       if (existingConversation) {
@@ -106,13 +108,15 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
       }
 
       // If no existing conversation, create a new one
-      const response = await api.createConversation(username, "direct", [userId]);
+      const response = await api.createConversation(username, "direct", [
+        userId,
+      ]);
       setShowNewMessage(false);
       setUserSearchQuery("");
       await addNewConversation(response);
       onSelectThread?.();
     } catch (error) {
-      console.error('Error creating conversation:', error);
+      console.error("Error creating conversation:", error);
     }
   };
 
@@ -123,7 +127,7 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
           <h2 className="text-xl font-semibold">Messages</h2>
           <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={() => setShowNewMessage(true)}
             className="hover:bg-gray-100 rounded-full"
           >
@@ -144,7 +148,7 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
               />
               <Button
                 variant="ghost"
-                size="icon"
+                size="sm"
                 onClick={() => {
                   setShowNewMessage(false);
                   setUserSearchQuery("");
@@ -164,9 +168,11 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
                     <button
                       key={user.id}
                       className={`w-full text-left px-3 py-2 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none ${
-                        index === selectedIndex ? 'bg-gray-100' : ''
+                        index === selectedIndex ? "bg-gray-100" : ""
                       }`}
-                      onClick={() => startNewConversation(user.id, user.username)}
+                      onClick={() =>
+                        startNewConversation(user.id, user.username)
+                      }
                       onMouseEnter={() => setSelectedIndex(index)}
                     >
                       <div className="flex items-center gap-2">
@@ -178,7 +184,9 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
                     </button>
                   ))
                 ) : (
-                  <div className="p-2 text-center text-gray-500">No users found</div>
+                  <div className="p-2 text-center text-gray-500">
+                    No users found
+                  </div>
                 )}
               </div>
             )}
@@ -197,11 +205,7 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
       </div>
 
       <ScrollArea className="flex-1">
-        {loading ? (
-          <div className="h-full flex items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
-          </div>
-        ) : filteredConversations.length > 0 ? (
+        {filteredConversations.length > 0 ? (
           <div className="space-y-1 p-2">
             {filteredConversations.map((conversation) => (
               <div
@@ -222,7 +226,9 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{conversation.name}</p>
                   <p className="text-sm text-gray-500 truncate">
-                    {conversation.type === "direct" ? "Direct Message" : "Group"}
+                    {conversation.type === "direct"
+                      ? "Direct Message"
+                      : "Group"}
                   </p>
                 </div>
               </div>
@@ -235,5 +241,5 @@ export default function MessageList({ onSelectThread }: MessageListProps) {
         )}
       </ScrollArea>
     </div>
-  )
-} 
+  );
+}
